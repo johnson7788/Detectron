@@ -1,3 +1,4 @@
+**不推荐Detectron，使用Detectron2**
 **Detectron is deprecated. Please see [detectron2](https://github.com/facebookresearch/detectron2), a ground-up rewrite of Detectron in PyTorch.**
 
 # Detectron
