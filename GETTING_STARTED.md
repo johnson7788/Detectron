@@ -1,14 +1,16 @@
 # Using Detectron
 
-This document provides brief tutorials covering Detectron for inference and training on the COCO dataset.
+本文档提供了涵盖Detectron的简短教程，以对COCO数据集进行推理和训练。
 
-- For general information about Detectron, please see [`README.md`](README.md).
-- For installation instructions, please see [`INSTALL.md`](INSTALL.md).
+- 有关Detectron的一般信息 please see [`README.md`](README.md).
+- 有关安装说明, please see [`INSTALL.md`](INSTALL.md).
 
-## Inference with Pretrained Models
+## 预训练模型推断
 
 #### 1. Directory of Image Files
-To run inference on a directory of image files (`demo/*.jpg` in this example), you can use the `infer_simple.py` tool. In this example, we're using an end-to-end trained Mask R-CNN model with a ResNet-101-FPN backbone from the model zoo:
+要在图像文件目录 (`demo/*.jpg` in this example)上进行推断, 
+you can use the `infer_simple.py` tool. 
+在此示例中，我们使用来自模型 model zoo ResNet-101-FPN backbone 端到端训练的Mask R-CNN模型
 
 ```
 python tools/infer_simple.py \
@@ -18,8 +20,9 @@ python tools/infer_simple.py \
     --wts https://dl.fbaipublicfiles.com/detectron/35861858/12_2017_baselines/e2e_mask_rcnn_R-101-FPN_2x.yaml.02_32_51.SgT4y1cO/output/train/coco_2014_train:coco_2014_valminusminival/generalized_rcnn/model_final.pkl \
     demo
 ```
-
-Detectron should automatically download the model from the URL specified by the `--wts` argument. This tool will output visualizations of the detections in PDF format in the directory specified by `--output-dir`. Here's an example of the output you should expect to see (for copyright information about the demo images see [`demo/NOTICE`](demo/NOTICE)).
+Detectron应该从`--wts`参数指定的URL自动下载模型。
+该工具将在“ --output-dir”指定的目录中以PDF格式输出检测结果的可视化。这是您应该看到的输出示例
+ (for copyright information about the demo images see [`demo/NOTICE`](demo/NOTICE)).
 
 <div align="center">
   <img src="demo/output/17790319373_bd19b24cfc_k_example_output.jpg" width="700px" />
@@ -28,11 +31,14 @@ Detectron should automatically download the model from the URL specified by the 
 
 **Notes:**
 
-- When running inference on your own high-resolution images, Mask R-CNN may be slow simply because substantial time is spent upsampling the predicted masks to the original image resolution (this has not been optimized). You can diagnose this issue if the `misc_mask` time reported by `tools/infer_simple.py` is high (e.g., much more than 20-90ms). The solution is to first resize your images such that the short side is around 600-800px (the exact choice does not matter) and then run inference on the resized image.
-
+- 在您自己的高分辨率图像上进行推理时，Mask R-CNN可能会变慢，
+这仅是因为要花费大量时间将预测的蒙版上采样到原始图像分辨率（尚未优化）。
+如果`tools / infer_simple.py`报告的`misc_mask`时间过长（例如，远远超过20-90ms），
+则可以诊断出此问题。解决方案是先调整图像大小，使短边在600-800px左右（确切的选择无关紧要），然后对调整后的图像进行推断。
 
 #### 2. COCO Dataset
-This example shows how to run an end-to-end trained Mask R-CNN model from the model zoo using a single GPU for inference. As configured, this will run inference on all images in `coco_2014_minival` (which must be properly installed).
+本示例说明如何使用单个GPU进行推理从model zoo运行端到端训练的Mask R-CNN模型。
+As configured, this will run inference on all images in `coco_2014_minival` (which must be properly installed).
 
 ```
 python tools/test_net.py \
@@ -51,12 +57,18 @@ python tools/test_net.py \
     NUM_GPUS $N
 ```
 
-On an NVIDIA Tesla P100 GPU, inference should take about 130-140 ms per image for this example.
+在NVIDIA Tesla P100 GPU上，在此示例中，推理应该花费大约130-140毫秒/图像。
 
 
-## Training a Model with Detectron
+## 用Detectron训练模型
 
-This is a tiny tutorial showing how to train a model on COCO. The model will be an end-to-end trained Faster R-CNN using a ResNet-50-FPN backbone. For the purpose of this tutorial, we'll use a short training schedule and a small input image size so that training and inference will be relatively fast. As a result, the box AP on COCO will be relatively low compared to our [baselines](MODEL_ZOO.md). This example is provided for instructive purposes only (i.e., not for comparing against publications).
+1788/5000
+Character limit: 5000
+这是一个很小的教程，显示了如何在COCO上训练模型。
+该模型将是使用ResNet-50-FPN主干进行端到端训练的Faster R-CNN。
+就本教程而言，我们将使用较短的训练时间表和较小的输入图像大小，以便训练和推理相对较快。
+As a result, the box AP on COCO will be relatively low compared to our [baselines](MODEL_ZOO.md). 
+提供此示例仅出于指导目的（即，不用于与出版物进行比较）。
 
 #### 1. Training with 1 GPU
 
@@ -84,7 +96,7 @@ python tools/train_net.py \
     OUTPUT_DIR /tmp/detectron-output
 ```
 
-Note that we've also added the `--multi-gpu-testing` flag to instruct Detectron to parallelize inference over multiple GPUs (2 in this example; see `NUM_GPUS` in the config file) after training has finished.
+请注意，在训练结束后，我们还添加了--multi-gpu-testing标志，以指示Detectron并行化对多个GPU的推理（本示例中为2个；请参阅配置文件中的NUM_GPUS）
 
 **Expected results:**
 
@@ -92,8 +104,12 @@ Note that we've also added the `--multi-gpu-testing` flag to instruct Detectron 
 - Inference time should be around 80ms / image (but in parallel on 2 GPUs, so half the total time)
 - Box AP on `coco_2014_minival` should be around 22.1% (+/- 0.1% stdev measured over 3 runs)
 
-To understand how learning schedules are adjusted (the "linear scaling rule"), please study these tutorial config files and read our paper [Accurate, Large Minibatch SGD: Training ImageNet in 1 Hour](https://arxiv.org/abs/1706.02677). **Aside from this tutorial, all of our released configs make use of 8 GPUs. If you will be using fewer than 8 GPUs for training (or do anything else that changes the minibatch size), it is essential that you understand how to manipulate training schedules according to the linear scaling rule.**
+要了解如何调整学习时间表（“线性缩放规则”），请研究这些教程配置文件并阅读我们的论文
+[Accurate, Large Minibatch SGD: Training ImageNet in 1 Hour](https://arxiv.org/abs/1706.02677).
+**除本教程外，我们所有已发布的配置均使用8个GPU。 如果您要使用少于8个GPU进行训练（或执行任何其他更改最小批量大小的操作），则必须了解如何根据线性缩放规则来操纵训练时间表。**
 
 **Notes:**
 
-- This training example uses a relatively low GPU-compute model and thus overhead from Caffe2 Python ops is relatively high. As a result, scaling as the number of GPUs is increased from 2 to 8 is relatively poor (e.g., training with 8 GPUs takes about 0.9 hours, only 4.5x faster than with 1 GPU). As larger, more GPU-compute heavy models are used, the scaling improves.
+- -此训练示例使用了相对较低的GPU计算模型，因此Caffe2 Python操作的开销相对较高。 
+结果，随着GPU的数量从2增加到8，扩展性相对较差（例如，使用8个GPU进行训练大约需要0.9个小时，仅比使用1个GPU快4.5倍）。 
+当使用更大，更多的GPU计算重型模型时，缩放比例会提高。
