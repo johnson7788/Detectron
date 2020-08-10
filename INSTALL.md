@@ -16,7 +16,8 @@
 
 ## Caffe2
 
-要安装具有CUDA支持的Caffe2，请遵循[Caffe2网站](https://caffe2.ai/)上的[安装说明](https://caffe2.ai/docs/getting-started.html)。 **如果已经安装了Caffe2，请确保将Caffe2更新到包含[Detectron模块]
+要安装具有CUDA支持的Caffe2，请遵循[Caffe2网站](https://caffe2.ai/)上的
+[安装说明](https://caffe2.ai/docs/getting-started.html)。 **如果已经安装了Caffe2，请确保将Caffe2更新到包含[Detectron模块]
 
 请先运行以下命令并按照注释中的指示检查其输出，然后再继续操作，以确保您的Caffe2安装成功。
 
@@ -37,7 +38,8 @@ python -c 'from caffe2.python import workspace; print(workspace.NumCudaDevices()
 Install the [COCO API](https://github.com/cocodataset/cocoapi):
 
 ```
-# COCOAPI=/path/to/clone/cocoapi
+COCOAPI=/content/cocoapi
+mkdir -p $COCOAPI
 git clone https://github.com/cocodataset/cocoapi.git $COCOAPI
 cd $COCOAPI/PythonAPI
 # Install into global site-packages
@@ -54,7 +56,9 @@ Note that instructions like `# COCOAPI=/path/to/install/cocoapi` indicate that y
 Clone the Detectron repository:
 
 ```
-# DETECTRON=/path/to/clone/detectron
+%%bash
+DETECTRON=/content/detectron
+mkdir -p $DETECTRON
 git clone https://github.com/facebookresearch/detectron $DETECTRON
 ```
 
@@ -73,6 +77,7 @@ cd $DETECTRON && make
 Check that Detectron tests pass (e.g. for [`SpatialNarrowAsOp test`](detectron/tests/test_spatial_narrow_as_op.py)):
 
 ```
+# 检查detectron是否安装正常
 python $DETECTRON/detectron/tests/test_spatial_narrow_as_op.py
 ```
 
